@@ -3,43 +3,32 @@ using UnityEngine;
 public class ObjectSpawner : MonoBehaviour
 {
     public GameObject[] objectPrefabs;
-    public float spawnInterval = 2f;
-    public float spawnForce = 5f;
-    public float minX = -5f; // Valor mínimo del rango en el eje X
-    public float maxX = 5f; // Valor máximo del rango en el eje X
-
-    private float spawnTimer;
+    public float spawnInterval = 1f;
+    public float spawnRangeXMin = -5f;
+    public float spawnRangeXMax = 5f;
+    public float objectSpeed = 5f;
 
     private void Start()
     {
-        spawnTimer = spawnInterval;
-    }
-
-    private void Update()
-    {
-        spawnTimer -= Time.deltaTime;
-
-        if (spawnTimer <= 0f)
-        {
-            SpawnObject();
-
-            spawnTimer = spawnInterval;
-        }
+        InvokeRepeating("SpawnObject", spawnInterval, spawnInterval);
     }
 
     private void SpawnObject()
     {
-        int randomIndex = Random.Range(0, objectPrefabs.Length);
-        GameObject selectedPrefab = objectPrefabs[randomIndex];
+        // Generar un índice aleatorio para seleccionar un objeto prefabricado
+        int prefabIndex = Random.Range(0, objectPrefabs.Length);
 
-        float spawnX = Random.Range(minX, maxX);
-        Vector3 spawnPosition = new Vector3(spawnX, transform.position.y, transform.position.z);
+        // Calcular una posición aleatoria dentro del rango especificado
+        float spawnPositionX = Random.Range(spawnRangeXMin, spawnRangeXMax);
+        Vector3 spawnPosition = new Vector3(spawnPositionX, transform.position.y, 0f);
 
-        // Asignar el script DestroyWhenInvisible al prefab del objeto
-        selectedPrefab.AddComponent<DestroyWhenInvisible>().Initialize(Camera.main);
+        // Instanciar el objeto y establecer su posición y velocidad
+        GameObject newObject = Instantiate(objectPrefabs[prefabIndex], spawnPosition, Quaternion.identity);
+        Rigidbody2D rigidbody2D = newObject.GetComponent<Rigidbody2D>();
+        rigidbody2D.velocity = Vector2.up * objectSpeed;
 
-        GameObject newObject = Instantiate(selectedPrefab, spawnPosition, Quaternion.identity);
-        Rigidbody2D rb = newObject.GetComponent<Rigidbody2D>();
-        rb.velocity = Vector2.up * spawnForce;
+        // Añadir el script DestroyWhenInvisible al objeto generado
+        DestroyWhenInvisible destroyScript = newObject.AddComponent<DestroyWhenInvisible>();
+        destroyScript.Initialize(Camera.main);
     }
 }

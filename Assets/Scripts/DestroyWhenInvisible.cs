@@ -9,23 +9,19 @@ public class DestroyWhenInvisible : MonoBehaviour
         mainCamera = camera;
     }
 
-    private void OnBecameInvisible()
+    private void Update()
     {
-        if (mainCamera != null && !IsVisibleFromCamera(mainCamera))
+        if (IsOutsideScreen())
         {
             Destroy(gameObject);
         }
     }
 
-    private bool IsVisibleFromCamera(Camera camera)
+    private bool IsOutsideScreen()
     {
-        if (GetComponent<Renderer>() == null)
-        {
-            // Si el objeto no tiene un componente Renderer, no es visible y se debe destruir
-            return false;
-        }
+        Vector3 viewportPosition = mainCamera.WorldToViewportPoint(transform.position);
 
-        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(camera);
-        return GeometryUtility.TestPlanesAABB(planes, GetComponent<Renderer>().bounds);
+        // Comprueba si la posición del objeto está fuera de los límites de la pantalla
+        return (viewportPosition.x < 0f || viewportPosition.x > 1f || viewportPosition.y < 0f || viewportPosition.y > 1f);
     }
 }
