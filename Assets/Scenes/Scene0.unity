@@ -566,10 +566,10 @@ MonoBehaviour:
   - {fileID: 954086710}
   - {fileID: 1974831619}
   - {fileID: 2116003326}
-  spawnInterval: 2.83
+  spawnInterval: 0.32
   spawnRangeXMin: -5
   spawnRangeXMax: 5
-  objectSpeed: 5
+  objectSpeed: 7.49
 --- !u!1 &1974831619
 GameObject:
   m_ObjectHideFlags: 0
